@@ -433,3 +433,7 @@ FodyWeavers.xsd
 
 .DS_Store
 **/.DS_Store
+
+**/staj.db
+**/staj.db-shm
+**/staj.db-wal
