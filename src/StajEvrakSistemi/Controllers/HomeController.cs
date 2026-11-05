@@ -10,6 +10,24 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult OgrenciOrnegi()
+    {
+        Ogrenci ogrenci1 = new Ogrenci(
+            "Ayşe Yılmaz",
+            "ayse@example.com",
+            "1001",
+            "Yazılım Mühendisliği"
+        );
+
+        return Content(
+            $"Öğrenci: {ogrenci1.AdSoyad} | " +
+            $"Numara: {ogrenci1.OgrenciNo} | " +
+            $"Bölüm: {ogrenci1.Bolum}"
+        );
+    }
+
+
 
     public IActionResult Privacy()
     {
