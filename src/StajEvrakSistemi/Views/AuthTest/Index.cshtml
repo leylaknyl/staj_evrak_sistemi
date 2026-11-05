@@ -1,0 +1,23 @@
+@model string
+
+@{
+    ViewData["Title"] = "Yetki Testi";
+}
+
+<div class="container mt-5">
+    <h2>@Model</h2>
+
+    <p>Hoş geldiniz: @User.Identity?.Name</p>
+
+    <form asp-controller="Account"
+          asp-action="Logout"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <button type="submit"
+                class="btn btn-danger">
+            Çıkış Yap
+        </button>
+    </form>
+</div>
