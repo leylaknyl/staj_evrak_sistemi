@@ -72,7 +72,25 @@ public class AccountController : Controller
             return View(model);
         }
 
-        return RedirectToAction("Index", "Home");
+        
+        if (await _userManager.IsInRoleAsync(user, "Admin"))
+        {
+            return RedirectToAction("Admin", "AuthTest");
+        }
+
+        if (await _userManager.IsInRoleAsync(user, "Ogrenci"))
+        {
+            return RedirectToAction("Ogrenci", "AuthTest");
+        }
+
+        await _signInManager.SignOutAsync();
+
+        ModelState.AddModelError(
+            "",
+            "Hesabınız için geçerli bir rol tanımlanmamış.");
+
+        return View(model);
+
     }
 
     [Authorize]
