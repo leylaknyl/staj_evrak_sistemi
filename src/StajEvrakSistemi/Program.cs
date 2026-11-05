@@ -7,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+var authDbPath = Path.Combine(
+    builder.Environment.ContentRootPath, "auth.db");
+
 builder.Services.AddDbContext<AuthDbContext>(options =>
-    options.UseSqlite("Data Source=auth.db"));
+    options.UseSqlite($"Data Source={authDbPath}"));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -36,6 +39,15 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+
+    await AuthSeed.InitializeAsync(
+        scope.ServiceProvider,
+        app.Configuration);
+}
 
 if (!app.Environment.IsDevelopment())
 {

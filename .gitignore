@@ -426,3 +426,8 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+**/auth.db
+**/auth.db-shm
+**/auth.db-wal
+
