@@ -13,6 +13,15 @@ var authDbPath = Path.Combine(
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlite($"Data Source={authDbPath}"));
 
+
+var stajDbPath = Path.Combine(
+    builder.Environment.ContentRootPath, "staj.db");
+
+builder.Services.AddDbContext<StajDbContext>(options =>
+    options.UseSqlite($"Data Source={stajDbPath}"));
+
+
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.User.RequireUniqueEmail = true;

@@ -1,0 +1,77 @@
+
+@model IReadOnlyList<StajEvrakSistemi.Models.OgrenciKaydi>
+
+@{
+    ViewData["Title"] = "Öğrenci Veri Seti";
+}
+
+<div class="container mt-4">
+    <h2>Öğrenci Veri Seti Yönetimi</h2>
+
+    <p>CSV dosyası yükleyerek öğrenci kayıtlarını ekleyebilirsiniz.</p>
+
+    @if (TempData["Hata"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Hata"]
+        </div>
+    }
+
+    @if (TempData["Basari"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Basari"]
+        </div>
+    }
+
+    <form asp-controller="AdminVeri"
+          asp-action="Yukle"
+          method="post"
+          enctype="multipart/form-data"
+          class="card p-4 mb-4">
+
+        @Html.AntiForgeryToken()
+
+        <label class="form-label">CSV Dosyası</label>
+
+        <input type="file"
+               name="dosya"
+               accept=".csv"
+               class="form-control mb-3"
+               required />
+
+        <button type="submit" class="btn btn-primary">
+            Veri Setini Yükle
+        </button>
+    </form>
+
+    <h4>Kayıtlı Öğrenciler (@Model.Count)</h4>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Öğrenci No</th>
+                    <th>Ad Soyad</th>
+                    <th>Bölüm</th>
+                    <th>E-posta</th>
+                    <th>Sınıf</th>
+                    <th>Önceki Staj Günü</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ogrenci in Model)
+                {
+                    <tr>
+                        <td>@ogrenci.OgrenciNo</td>
+                        <td>@ogrenci.AdSoyad</td>
+                        <td>@ogrenci.Bolum</td>
+                        <td>@ogrenci.Eposta</td>
+                        <td>@ogrenci.Sinif</td>
+                        <td>@ogrenci.OncekiStajGunu</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

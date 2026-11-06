@@ -431,3 +431,9 @@ FodyWeavers.xsd
 **/auth.db-shm
 **/auth.db-wal
 
+.DS_Store
+**/.DS_Store
+
+**/staj.db
+**/staj.db-shm
+**/staj.db-wal
