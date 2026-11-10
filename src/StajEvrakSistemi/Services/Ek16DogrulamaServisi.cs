@@ -48,47 +48,98 @@ public class IletisimKurali : DogrulamaKurali
 }
 
 // 2. KİMLİK NUMARASI
+
 public class KimlikKurali : DogrulamaKurali
 {
     public override IEnumerable<DogrulamaMesaji>
         KontrolEt(Ek16BasvuruBilgileri bilgi)
     {
-        if (string.IsNullOrWhiteSpace(bilgi.KimlikNo) ||
-    string.IsNullOrWhiteSpace(bilgi.Uyruk))
-{
-    yield break;
-}
-        if (!Regex.IsMatch(bilgi.KimlikNo, @"^[0-9]{11}$"))
+        string kimlik = bilgi.KimlikNo?.Trim() ?? "";
+        string uyruk = bilgi.Uyruk?.Trim() ?? "";
+
+        // Bos alanlar ZorunluAlanKurali tarafindan kontrol edilir.
+        if (string.IsNullOrWhiteSpace(kimlik) ||
+            string.IsNullOrWhiteSpace(uyruk))
+        {
+            yield break;
+        }
+
+        // Her iki kimlik turu de 11 rakam olmali.
+        if (!Regex.IsMatch(kimlik, @"^[0-9]{11}$"))
         {
             yield return new(
                 "KimlikNo",
-                "Kimlik numarası 11 rakam olmalı.");
+                "Kimlik numarasi 11 rakamdan olusmalidir.");
 
             yield break;
         }
 
-        if (bilgi.Uyruk == "TC")
+        if (uyruk == "TC")
         {
-            if (bilgi.KimlikNo.StartsWith("0"))
+            // TC kimlik numarasi sifirla baslayamaz.
+            if (kimlik[0] == '0')
+            {
                 yield return new(
                     "KimlikNo",
-                    "TC kimlik numarası 0 ile başlayamaz.");
+                    "TC kimlik numarasi 0 ile baslayamaz.");
+
+                yield break;
+            }
+
+            // Karakterleri rakama donustur.
+            int[] rakamlar = kimlik
+                .Select(c => c - '0')
+                .ToArray();
+
+            // 1, 3, 5, 7, 9. basamaklar
+            int tekToplam =
+                rakamlar[0] +
+                rakamlar[2] +
+                rakamlar[4] +
+                rakamlar[6] +
+                rakamlar[8];
+
+            // 2, 4, 6, 8. basamaklar
+            int ciftToplam =
+                rakamlar[1] +
+                rakamlar[3] +
+                rakamlar[5] +
+                rakamlar[7];
+
+            // 10. kontrol basamagi
+            int onuncuBasamak =
+                (((tekToplam * 7 - ciftToplam) % 10) + 10) % 10;
+
+            // 11. kontrol basamagi
+            int onBirinciBasamak =
+                rakamlar.Take(10).Sum() % 10;
+
+            if (rakamlar[9] != onuncuBasamak ||
+                rakamlar[10] != onBirinciBasamak)
+            {
+                yield return new(
+                    "KimlikNo",
+                    "TC kimlik numarasinin kontrol basamaklari hatali.");
+            }
         }
-        else if (bilgi.Uyruk == "Yabanci")
+        else if (uyruk == "Yabanci")
         {
-            if (!bilgi.KimlikNo.StartsWith("99"))
+            if (!kimlik.StartsWith("99"))
+            {
                 yield return new(
                     "KimlikNo",
-                    "Yabancı kimlik numarası 99 ile başlamalı.");
+                    "Yabanci kimlik numarasi 99 ile baslamalidir.");
+            }
         }
         else
         {
             yield return new(
                 "Uyruk",
-                "Uyruk TC veya Yabanci olmalı.");
+                "Gecerli bir uyruk secilmelidir.");
         }
     }
 }
+
 
 // 3. TESLİM TARİHİ
 public class TeslimTarihiKurali : DogrulamaKurali
