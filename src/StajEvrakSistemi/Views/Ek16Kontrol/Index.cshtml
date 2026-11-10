@@ -1,0 +1,130 @@
+
+@model StajEvrakSistemi.ViewModels.Ek16KontrolViewModel
+
+@{
+    ViewData["Title"] = "Ek-16 Bilgi Kontrolü";
+}
+
+<div class="container mt-4">
+
+    <h2>Ek-16 Staj Başvuru Bilgileri</h2>
+
+    <p class="text-muted">
+        Bilgilerinizi girin ve doğrulama sonucunu görüntüleyin.
+    </p>
+
+    <form asp-controller="Ek16Kontrol"
+          asp-action="Index"
+          method="post"
+          class="card p-4 mb-4">
+
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Ad Soyad</label>
+            <input asp-for="Bilgiler.AdSoyad"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">E-posta</label>
+            <input asp-for="Bilgiler.Eposta"
+                   type="email"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Telefon</label>
+            <input asp-for="Bilgiler.Telefon"
+                   class="form-control"
+                   placeholder="+90 555 123 45 67" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Uyruk</label>
+            <select asp-for="Bilgiler.Uyruk"
+                    class="form-select">
+                <option value="">Seçiniz</option>
+                <option value="TC">TC</option>
+                <option value="Yabanci">Yabancı</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kimlik Numarası</label>
+            <input asp-for="Bilgiler.KimlikNo"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Adres</label>
+            <textarea asp-for="Bilgiler.Adres"
+                      class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Evrak Teslim Tarihi
+            </label>
+            <input asp-for="Bilgiler.TeslimTarihi"
+                   type="date"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Staj Başlangıç Tarihi
+            </label>
+            <input asp-for="Bilgiler.StajBaslangicTarihi"
+                   type="date"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mühendis Sayısı</label>
+            <input asp-for="Bilgiler.MuhendisSayisi"
+                   type="number"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Mühendisin Mezun Olduğu Bölüm
+            </label>
+            <input asp-for="Bilgiler.MuhendisMezunBolumu"
+                   class="form-control" />
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Bilgileri Kontrol Et
+        </button>
+    </form>
+
+    @if (Model.KontrolEdildi)
+    {
+        <h3>Doğrulama Sonuçları</h3>
+
+        @if (Model.Sonuclar.Count == 0)
+        {
+            <div class="alert alert-success">
+                Tanımlı kurallara göre hata bulunamadı.
+            </div>
+        }
+        else
+        {
+            @foreach (var sonuc in Model.Sonuclar)
+            {
+                <div class="alert @(sonuc.UyariMi
+                    ? "alert-warning"
+                    : "alert-danger")">
+
+                    <strong>@sonuc.Alan:</strong>
+                    @sonuc.Mesaj
+
+                </div>
+            }
+        }
+    }
+
+</div>
