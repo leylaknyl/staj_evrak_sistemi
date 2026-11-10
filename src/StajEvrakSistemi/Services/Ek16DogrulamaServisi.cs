@@ -25,18 +25,20 @@ public class IletisimKurali : DogrulamaKurali
     public override IEnumerable<DogrulamaMesaji>
         KontrolEt(Ek16BasvuruBilgileri bilgi)
     {
-        if (!Regex.IsMatch(
-            bilgi.Telefon,
-            @"^\+90 [0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}$"))
+        if (!string.IsNullOrWhiteSpace(bilgi.Telefon) &&
+    !Regex.IsMatch(
+        bilgi.Telefon,
+        @"^\+90 [0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}$"))
         {
             yield return new(
                 "Telefon",
                 "Telefon +90 555 123 45 67 biçiminde olmalı.");
         }
 
-        if (!Regex.IsMatch(
-            bilgi.Eposta,
-            @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        if (!string.IsNullOrWhiteSpace(bilgi.Eposta) &&
+        !Regex.IsMatch(
+        bilgi.Eposta,
+        @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
         {
             yield return new(
                 "Eposta",
@@ -51,6 +53,11 @@ public class KimlikKurali : DogrulamaKurali
     public override IEnumerable<DogrulamaMesaji>
         KontrolEt(Ek16BasvuruBilgileri bilgi)
     {
+        if (string.IsNullOrWhiteSpace(bilgi.KimlikNo) ||
+    string.IsNullOrWhiteSpace(bilgi.Uyruk))
+{
+    yield break;
+}
         if (!Regex.IsMatch(bilgi.KimlikNo, @"^[0-9]{11}$"))
         {
             yield return new(
@@ -143,6 +150,7 @@ public class Ek16DogrulamaServisi
 private readonly List<DogrulamaKurali> _kurallar =
     new List<DogrulamaKurali>
     {
+        new ZorunluAlanKurali(),
         new IletisimKurali(),
         new KimlikKurali(),
         new TeslimTarihiKurali(),
