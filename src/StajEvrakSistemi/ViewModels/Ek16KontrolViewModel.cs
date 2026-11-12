@@ -9,6 +9,8 @@ public class Ek16KontrolViewModel
     public Ek16BasvuruBilgileri Bilgiler { get; set; }
         = new Ek16BasvuruBilgileri();
 
+    public decimal? HesaplananStajGunu { get; set; }
+
     public List<DogrulamaMesaji> Sonuclar { get; set; }
         = new List<DogrulamaMesaji>();
 

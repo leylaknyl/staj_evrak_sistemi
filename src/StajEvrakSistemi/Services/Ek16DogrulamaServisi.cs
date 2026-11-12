@@ -203,10 +203,15 @@ private readonly List<DogrulamaKurali> _kurallar =
     {
         new ZorunluAlanKurali(),
         new OgretimYiliKurali(),
+        new OgretimYiliTarihKurali(),
+        new StajGunuKurali(),
+        new AdresKurali(),
+        new OnayKurali(),
         new IletisimKurali(),
         new KimlikKurali(),
         new TeslimTarihiKurali(),
-        new MuhendisKurali()
+        new MuhendisKurali(),
+        
     };
 
 

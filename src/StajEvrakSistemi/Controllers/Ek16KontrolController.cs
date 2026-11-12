@@ -28,6 +28,8 @@ public class Ek16KontrolController : Controller
     public IActionResult Index(Ek16KontrolViewModel model)
     {
         model.Sonuclar = _servis.Dogrula(model.Bilgiler);
+        model.HesaplananStajGunu =
+            StajGunuKurali.Hesapla(model.Bilgiler);
 
         model.KontrolEdildi = true;
 

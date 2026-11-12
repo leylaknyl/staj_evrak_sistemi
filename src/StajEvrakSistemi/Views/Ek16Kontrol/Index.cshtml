@@ -56,11 +56,19 @@
                    class="form-control" />
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Adres</label>
-            <textarea asp-for="Bilgiler.Adres"
-                      class="form-control"></textarea>
-        </div>
+        
+<div class="mb-3">
+    <label class="form-label">Adres</label>
+
+    <textarea asp-for="Bilgiler.Adres"
+              class="form-control"></textarea>
+
+    <small class="text-muted">
+        Örnek: Cumhuriyet Mahallesi, Atatürk Caddesi,
+        Bina No: 12, Daire No: 3, İzmit/Kocaeli
+    </small>
+</div>
+
 
         
         <div class="mb-3">
@@ -91,6 +99,78 @@
                    class="form-control" />
         </div>
 
+
+<div class="mb-3">
+    <label class="form-label">
+        Staj Bitiş Tarihi
+    </label>
+
+    <input asp-for="Bilgiler.StajBitisTarihi"
+           type="date"
+           class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">
+        Haftalık Çalışma Günleri
+    </label>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Pazartesi"
+               class="form-check-input" />
+        <label class="form-check-label">Pazartesi</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Sali"
+               class="form-check-input" />
+        <label class="form-check-label">Salı</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Carsamba"
+               class="form-check-input" />
+        <label class="form-check-label">Çarşamba</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Persembe"
+               class="form-check-input" />
+        <label class="form-check-label">Perşembe</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Cuma"
+               class="form-check-input" />
+        <label class="form-check-label">Cuma</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Cumartesi"
+               class="form-check-input" />
+        <label class="form-check-label">Cumartesi</label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Bilgiler.Pazar"
+               class="form-check-input" />
+        <label class="form-check-label">Pazar</label>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        Ek-16 Belgesinde Yazılı Staj Gün Sayısı
+    </label>
+
+    <input asp-for="Bilgiler.BelgedekiStajGunSayisi"
+           type="number"
+           step="0.5"
+           min="0"
+           class="form-control" />
+</div>
+
+
         <div class="mb-3">
             <label class="form-label">Mühendis Sayısı</label>
             <input asp-for="Bilgiler.MuhendisSayisi"
@@ -106,6 +186,66 @@
                    class="form-control" />
         </div>
 
+    
+         
+<hr />
+
+<h4>Ek-16 Belge Onay Kontrolleri</h4>
+
+<p class="text-muted">
+    Bu alanları yüklediğiniz belgeye bakarak işaretleyiniz.
+</p>
+
+<div class="form-check mb-2">
+    <input asp-for="Bilgiler.OgrenciOnayiVar"
+           class="form-check-input" />
+    <label class="form-check-label">
+        Belgede öğrenci onayı var
+    </label>
+</div>
+
+<div class="form-check mb-2">
+    <input asp-for="Bilgiler.DanismanOnayiVar"
+           class="form-check-input" />
+    <label class="form-check-label">
+        Belgede staj danışmanı onayı var
+    </label>
+</div>
+
+<div class="form-check mb-2">
+    <input asp-for="Bilgiler.IsverenBilgileriDolu"
+           class="form-check-input" />
+    <label class="form-check-label">
+        İşveren bölümündeki bilgiler eksiksiz
+    </label>
+</div>
+
+<div class="form-check mb-2">
+    <input asp-for="Bilgiler.IsverenImzasiVar"
+           class="form-check-input" />
+    <label class="form-check-label">
+        İşveren imzası mevcut
+    </label>
+</div>
+
+<div class="form-check mb-3">
+    <input asp-for="Bilgiler.IsverenKasesiVar"
+           class="form-check-input" />
+    <label class="form-check-label">
+        İşveren kaşesi mevcut
+    </label>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        Faks (isteğe bağlı)
+    </label>
+    <input asp-for="Bilgiler.Faks"
+           class="form-control" />
+</div>
+
+
+       
         <button type="submit"
                 class="btn btn-primary">
             Bilgileri Kontrol Et
@@ -115,6 +255,16 @@
     @if (Model.KontrolEdildi)
     {
         <h3>Doğrulama Sonuçları</h3>
+
+
+@if (Model.HesaplananStajGunu.HasValue)
+{
+    <div class="alert alert-info">
+        <strong>Hesaplanan Geçerli Staj Günü:</strong>
+        @Model.HesaplananStajGunu.Value.ToString("0.##")
+    </div>
+}
+
 
         @if (Model.Sonuclar.Count == 0)
         {
