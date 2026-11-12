@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StajEvrakSistemi.Data;
+using StajEvrakSistemi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<Ek16DogrulamaServisi>();
 
 var authDbPath = Path.Combine(
     builder.Environment.ContentRootPath, "auth.db");
