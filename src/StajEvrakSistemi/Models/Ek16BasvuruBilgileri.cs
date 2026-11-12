@@ -24,4 +24,5 @@ public class Ek16BasvuruBilgileri
 
     public string MuhendisMezunBolumu { get; set; }
         = string.Empty;
+    public string OgretimYili { get; set; } = string.Empty;
 }

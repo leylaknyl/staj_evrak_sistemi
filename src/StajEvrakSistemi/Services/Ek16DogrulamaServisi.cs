@@ -202,6 +202,7 @@ private readonly List<DogrulamaKurali> _kurallar =
     new List<DogrulamaKurali>
     {
         new ZorunluAlanKurali(),
+        new OgretimYiliKurali(),
         new IletisimKurali(),
         new KimlikKurali(),
         new TeslimTarihiKurali(),
