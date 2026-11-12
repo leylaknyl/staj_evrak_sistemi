@@ -1,0 +1,115 @@
+
+@model StajEvrakSistemi.ViewModels.AdminPanelViewModel
+
+@{
+    ViewData["Title"] = "Admin Paneli";
+}
+
+<div class="container mt-4">
+
+    <div class="p-4 bg-light rounded mb-4">
+        <h2>Admin Yönetim Paneli</h2>
+
+        <p class="text-muted mb-0">
+            Öğrenci veri setini ve sistem kayıtlarını yönetin.
+        </p>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card border-primary h-100">
+                <div class="card-body">
+                    <h6>Kayıtlı Öğrenci</h6>
+
+                    <h2>@Model.ToplamOgrenci</h2>
+
+                    <a asp-controller="AdminVeri"
+                       asp-action="Index"
+                       class="btn btn-outline-primary btn-sm">
+                        Veri Setini Görüntüle
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6>CSV Veri Seti Yönetimi</h6>
+
+                    <p>Yeni öğrenci kayıtları yükleyin.</p>
+
+                    <a asp-controller="AdminVeri"
+                       asp-action="Index"
+                       class="btn btn-primary btn-sm">
+                        CSV Yönetimine Git
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6>Belge Başvuruları</h6>
+
+                    <p>
+                        Belge kayıt sistemi eklendiğinde
+                        başvurular burada görüntülenecek.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Entegrasyon bekleniyor
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Son Eklenen Öğrenciler</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.SonOgrenciler.Count == 0)
+            {
+                <div class="alert alert-info">
+                    Henüz kayıtlı öğrenci bulunmuyor.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+
+                        <thead>
+                            <tr>
+                                <th>Öğrenci No</th>
+                                <th>Ad Soyad</th>
+                                <th>Bölüm</th>
+                                <th>E-posta</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var ogrenci in Model.SonOgrenciler)
+                            {
+                                <tr>
+                                    <td>@ogrenci.OgrenciNo</td>
+                                    <td>@ogrenci.AdSoyad</td>
+                                    <td>@ogrenci.Bolum</td>
+                                    <td>@ogrenci.Eposta</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

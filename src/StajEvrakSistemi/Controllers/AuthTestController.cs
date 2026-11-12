@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,12 +9,12 @@ public class AuthTestController : Controller
     [Authorize(Roles = "Admin")]
     public IActionResult Admin()
     {
-        return View("Index", "Admin girişi başarılı!");
+        return RedirectToAction("Admin", "Paneller");
     }
 
     [Authorize(Roles = "Ogrenci")]
     public IActionResult Ogrenci()
     {
-        return View("Index", "Öğrenci girişi başarılı!");
+        return RedirectToAction("Ogrenci", "Paneller");
     }
 }

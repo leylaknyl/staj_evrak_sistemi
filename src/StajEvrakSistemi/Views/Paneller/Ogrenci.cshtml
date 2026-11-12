@@ -1,0 +1,100 @@
+
+@model StajEvrakSistemi.ViewModels.OgrenciPanelViewModel
+
+@{
+    ViewData["Title"] = "Öğrenci Paneli";
+}
+
+<div class="container mt-4">
+
+    <div class="p-4 bg-light rounded mb-4">
+        <h2>Öğrenci Paneli</h2>
+        <p class="text-muted mb-0">
+            Hoş geldiniz, @Model.Eposta
+        </p>
+    </div>
+
+    @if (Model.Ogrenci == null)
+    {
+        <div class="alert alert-warning">
+            Giriş e-posta adresinizle eşleşen öğrenci kaydı
+            henüz bulunamadı. Veri setinin admin tarafından
+            yüklenmiş olduğunu kontrol ediniz.
+        </div>
+    }
+    else
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Öğrenci Bilgilerim</h5>
+            </div>
+
+            <div class="card-body">
+                <p>
+                    <strong>Ad Soyad:</strong>
+                    @Model.Ogrenci.AdSoyad
+                </p>
+
+                <p>
+                    <strong>Öğrenci No:</strong>
+                    @Model.Ogrenci.OgrenciNo
+                </p>
+
+                <p>
+                    <strong>Bölüm:</strong>
+                    @Model.Ogrenci.Bolum
+                </p>
+
+                <p>
+                    <strong>Sınıf:</strong>
+                    @Model.Ogrenci.Sinif
+                </p>
+
+                <p class="mb-0">
+                    <strong>Önceki Staj Günü:</strong>
+                    @Model.Ogrenci.OncekiStajGunu
+                </p>
+            </div>
+        </div>
+    }
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>Ek-16 Bilgi Kontrolü</h5>
+
+                    <p>
+                        Staj başvuru bilgilerinizi girerek
+                        doğrulama sonuçlarını görüntüleyin.
+                    </p>
+
+                    <a asp-controller="Ek16Kontrol"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Bilgilerimi Kontrol Et
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5>Ek-16 Evrak Yükleme</h5>
+
+                    <p>
+                        PDF veya Word belgesi yükleme işlemi,
+                        belge modülüyle eklenecektir.
+                    </p>
+
+                    <span class="badge bg-secondary">
+                        Henüz entegre edilmedi
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
