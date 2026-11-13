@@ -1,0 +1,94 @@
+@model IReadOnlyList<Basvuru>
+
+@{
+    ViewData["Title"] = "Belge Başvuruları";
+}
+
+<div class="container mt-4">
+    <h1>Belge Başvuruları</h1>
+
+    @if (TempData["Hata"] is string hata)
+    {
+        <div class="alert alert-warning">@hata</div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <p class="text-muted">Henüz başvuru bulunmuyor.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Başvuru No</th>
+                        <th scope="col">Öğrenci No</th>
+                        <th scope="col">Ad Soyad</th>
+                        <th scope="col">Durum</th>
+                        <th scope="col">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var basvuru in Model)
+                    {
+                        var durumMetni = basvuru.Durum switch
+                        {
+                            BasvuruDurumu.Yuklendi => "Yüklendi",
+                            BasvuruDurumu.Inceleniyor => "İnceleniyor",
+                            BasvuruDurumu.HataliEksik => "Hatalı / Eksik",
+                            BasvuruDurumu.Onaylandi => "Onaylandı",
+                            BasvuruDurumu.Tamamlandi => "Tamamlandı",
+                            _ => basvuru.Durum.ToString()
+                        };
+
+                        <tr>
+                            <td>@basvuru.Id</td>
+                            <td>@basvuru.OgrenciKaydi.OgrenciNo</td>
+                            <td>@basvuru.OgrenciKaydi.AdSoyad</td>
+                            <td>@durumMetni</td>
+                            <td>
+                                @if (basvuru.Durum == BasvuruDurumu.Yuklendi)
+                                {
+                                    <form asp-action="IncelemeyeAl" method="post">
+                                        <input type="hidden" name="id" value="@basvuru.Id" />
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            İncelemeye Al
+                                        </button>
+                                    </form>
+                                }
+                                else if (basvuru.Durum == BasvuruDurumu.Inceleniyor)
+                                {
+                                    <form asp-action="Onayla" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@basvuru.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">Onayla</button>
+                                    </form>
+
+                                    <form asp-action="HataliEksikIsaretle" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@basvuru.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            Hatalı / Eksik İşaretle
+                                        </button>
+                                    </form>
+                                }
+                                else if (basvuru.Durum == BasvuruDurumu.Onaylandi)
+                                {
+                                    <form asp-action="Tamamla" method="post">
+                                        <input type="hidden" name="id" value="@basvuru.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            Tamamla
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Paneller" asp-action="Admin" class="btn btn-outline-secondary">
+        Admin Paneline Dön
+    </a>
+</div>

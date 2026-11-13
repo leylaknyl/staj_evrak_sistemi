@@ -15,6 +15,10 @@ public class StajDbContext : DbContext
     public DbSet<OgrenciKaydi> OgrenciKayitlari
         => Set<OgrenciKaydi>();
 
+    public DbSet<Basvuru> Basvurular => Set<Basvuru>();
+    public DbSet<BasvuruDosyasi> BasvuruDosyalari => Set<BasvuruDosyasi>();
+    public DbSet<DogrulamaSonucu> DogrulamaSonuclari => Set<DogrulamaSonucu>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
     {
@@ -23,5 +27,10 @@ public class StajDbContext : DbContext
         modelBuilder.Entity<OgrenciKaydi>()
             .HasIndex(o => o.OgrenciNo)
             .IsUnique();
+            modelBuilder.Entity<Basvuru>()
+                .HasOne(b => b.OgrenciKaydi)
+                .WithMany()
+                .HasForeignKey(b => b.OgrenciKaydiId)
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }
