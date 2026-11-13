@@ -58,6 +58,53 @@
         </div>
     }
 
+    @if (Model.Ogrenci is not null)
+{
+    <section class="card mb-4">
+        <div class="card-body">
+            <h5>Başvurularım</h5>
+
+            @if (Model.Basvurular.Count == 0)
+            {
+                <p class="mb-0 text-muted">Henüz başvurunuz bulunmuyor.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Başvuru No</th>
+                                <th scope="col">Son Yüklenen Dosya</th>
+                                <th scope="col">Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var basvuru in Model.Basvurular)
+                            {
+                                var durumMetni = basvuru.Durum switch
+                                {
+                                    BasvuruDurumu.Yuklendi => "Yüklendi",
+                                    BasvuruDurumu.Inceleniyor => "İnceleniyor",
+                                    BasvuruDurumu.HataliEksik => "Hatalı / Eksik",
+                                    BasvuruDurumu.Onaylandi => "Onaylandı",
+                                    BasvuruDurumu.Tamamlandi => "Tamamlandı",
+                                    _ => basvuru.Durum.ToString()
+                                };
+
+                                <tr>
+                                    <td>@basvuru.Id</td>
+                                    <td>@(basvuru.DosyaAdi ?? "Dosya kaydı yok")</td>
+                                    <td>@durumMetni</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+}
     <div class="row g-3">
 
         <div class="col-md-6">

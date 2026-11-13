@@ -34,22 +34,40 @@ public class PanellerController : Controller
             return Challenge();
         }
 
-        string eposta = kullanici.Email?.Trim().ToLower() ?? "";
+        string eposta = kullanici.Email?.Trim().ToLowerInvariant() ?? "";
 
-        var ogrenciKaydi = await _db.OgrenciKayitlari
-            .AsNoTracking()
-            .FirstOrDefaultAsync(
-                x => x.Eposta.ToLower() == eposta);
+var ogrenciKayitlari = await _db.OgrenciKayitlari
+    .AsNoTracking()
+    .Where(o => eposta != "" && o.Eposta.ToLower() == eposta)
+    .Take(2)
+    .ToListAsync();
 
-        var model = new OgrenciPanelViewModel
-        {
-            Eposta = kullanici.Email ?? "",
-            Ogrenci = ogrenciKaydi
-        };
+var ogrenciKaydi = ogrenciKayitlari.Count == 1 ? ogrenciKayitlari[0] : null;
 
-        return View(model);
+var model = new OgrenciPanelViewModel
+{
+    Eposta = kullanici.Email ?? "",
+    Ogrenci = ogrenciKaydi
+};
+
+if (ogrenciKaydi is not null)
+{
+    model.Basvurular = await _db.Basvurular
+        .AsNoTracking()
+        .Where(b => b.OgrenciKaydiId == ogrenciKaydi.Id)
+        .OrderByDescending(b => b.Id)
+        .Select(b => new OgrenciBasvuruSatiri(
+            b.Id,
+            b.Dosyalar
+                .OrderByDescending(d => d.Id)
+                .Select(d => d.OrijinalDosyaAdi)
+                .FirstOrDefault(),
+            b.Durum))
+        .ToListAsync();
+}
+
+return View(model);
     }
-
     // ADMİN PANELİ
     [Authorize(Roles = "Admin")]
     [HttpGet]

@@ -9,6 +9,7 @@ public class OgrenciPanelViewModel
     public string Eposta { get; set; } = string.Empty;
 
     public OgrenciKaydi? Ogrenci { get; set; }
+    public List<OgrenciBasvuruSatiri> Basvurular { get; set; } = new();
 }
 
 // Admin panelinin kullanacağı veriler
@@ -19,3 +20,8 @@ public class AdminPanelViewModel
     public List<OgrenciKaydi> SonOgrenciler { get; set; }
         = new List<OgrenciKaydi>();
 }
+
+public record OgrenciBasvuruSatiri(
+    int Id,
+    string? DosyaAdi,
+    StajEvrakSistemi.Models.BasvuruDurumu Durum);
