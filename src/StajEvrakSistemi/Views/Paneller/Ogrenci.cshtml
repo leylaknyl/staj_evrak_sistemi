@@ -57,7 +57,74 @@
             </div>
         </div>
     }
+    @if (Model.Ogrenci is not null)
+{
+    <section class="card mb-4">
+        <div class="card-body">
+            <h5>Başvurularım</h5>
 
+            @if (Model.Basvurular.Count == 0)
+            {
+                <p class="mb-0 text-muted">Henüz başvurunuz bulunmuyor.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Başvuru No</th>
+                                <th scope="col">Son Yüklenen Dosya</th>
+                                <th scope="col">Durum</th>
+                                <th scope="col">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var basvuru in Model.Basvurular)
+                            {
+                                var durumMetni = basvuru.Durum switch
+                                {
+                                    BasvuruDurumu.Yuklendi => "Yüklendi",
+                                    BasvuruDurumu.Inceleniyor => "İnceleniyor",
+                                    BasvuruDurumu.HataliEksik => "Hatalı / Eksik",
+                                    BasvuruDurumu.Onaylandi => "Onaylandı",
+                                    BasvuruDurumu.Tamamlandi => "Tamamlandı",
+                                    _ => basvuru.Durum.ToString()
+                                };
+
+                                <tr>
+                                    <td>@basvuru.Id</td>
+                                    <td>@(basvuru.DosyaAdi ?? "Dosya kaydı yok")</td>
+                                    <td>@durumMetni</td>
+                                    <td>
+    @if (basvuru.Durum == BasvuruDurumu.HataliEksik)
+    {
+        <form asp-controller="Evrak" asp-action="Yukle"
+              method="post" enctype="multipart/form-data">
+            <input type="hidden" name="basvuruId" value="@basvuru.Id" />
+
+            <label for="duzeltme-@basvuru.Id" class="form-label">
+                Düzeltilmiş Ek-16 dosyası
+            </label>
+            <input id="duzeltme-@basvuru.Id" name="dosya" type="file"
+                   class="form-control form-control-sm mb-2"
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                Yeniden Yükle
+            </button>
+        </form>
+    }
+</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+}
     <div class="row g-3">
 
         <div class="col-md-6">
@@ -84,14 +151,30 @@
                 <div class="card-body">
                     <h5>Ek-16 Evrak Yükleme</h5>
 
-                    <p>
-                        PDF veya Word belgesi yükleme işlemi,
-                        belge modülüyle eklenecektir.
-                    </p>
+                    @if (TempData["EvrakHata"] is string evrakHata)
+{
+    <div class="alert alert-danger">@evrakHata</div>
+}
 
-                    <span class="badge bg-secondary">
-                        Henüz entegre edilmedi
-                    </span>
+@if (TempData["EvrakBasari"] is string evrakBasari)
+{
+    <div class="alert alert-success">@evrakBasari</div>
+}
+
+@if (Model.Ogrenci is not null)
+{
+    <form asp-controller="Evrak" asp-action="Yukle"
+          method="post" enctype="multipart/form-data">
+        <label for="ek16Dosyasi" class="form-label">Ek-16 dosyası</label>
+        <input id="ek16Dosyasi" name="dosya" type="file"
+               class="form-control mb-2"
+               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
+
+        <p class="form-text">PDF, Word, JPEG veya PNG. En fazla 10 MB.</p>
+
+        <button type="submit" class="btn btn-primary">Evrak Yükle</button>
+    </form>
+}
                 </div>
             </div>
         </div>
