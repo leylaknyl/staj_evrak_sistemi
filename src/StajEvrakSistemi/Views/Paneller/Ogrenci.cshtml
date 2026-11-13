@@ -105,6 +105,15 @@
         Ek-16 Kontrolü
     </a>
 }
+    @if (basvuru.DosyaAdi is not null)
+{
+    <a asp-controller="Ek16Kontrol"
+       asp-action="Sonuclar"
+       asp-route-basvuruId="@basvuru.Id"
+       class="btn btn-outline-secondary btn-sm mb-2">
+        Doğrulama Sonuçları
+    </a>
+}
     @if (basvuru.Durum == BasvuruDurumu.HataliEksik)
     {
         <form asp-controller="Evrak" asp-action="Yukle"

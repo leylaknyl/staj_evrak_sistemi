@@ -147,7 +147,8 @@ void Karsilastir(string alan, string? formDegeri, string? kayitDegeri)
         Mesaj = sonuc.Mesaj,
         UyariMi = sonuc.UyariMi
     }));
-
+      
+    dosya.KontrolEdilmeUtc = DateTime.UtcNow;
     await _db.SaveChangesAsync();
     await islem.CommitAsync();
 }
@@ -156,6 +157,51 @@ void Karsilastir(string alan, string? formDegeri, string? kayitDegeri)
         return View(model);
     }
 
+
+     [HttpGet]
+public async Task<IActionResult> Sonuclar(int basvuruId)
+{
+    var kullanici = await _userManager.GetUserAsync(User);
+    if (kullanici is null)
+    {
+        return Challenge();
+    }
+
+    string eposta = kullanici.Email?.Trim().ToLowerInvariant() ?? "";
+    if (eposta.Length == 0)
+    {
+        return NotFound();
+    }
+
+    var ogrenciIdleri = await _db.OgrenciKayitlari
+        .AsNoTracking()
+        .Where(o => o.Eposta.ToLower() == eposta)
+        .Select(o => o.Id)
+        .Take(2)
+        .ToListAsync();
+
+    if (ogrenciIdleri.Count != 1)
+    {
+        return NotFound();
+    }
+
+    int ogrenciId = ogrenciIdleri[0];
+
+    var dosya = await _db.BasvuruDosyalari
+        .AsNoTracking()
+        .Include(d => d.DogrulamaSonuclari)
+        .Where(d => d.BasvuruId == basvuruId &&
+            d.Basvuru.OgrenciKaydiId == ogrenciId)
+        .OrderByDescending(d => d.Id)
+        .FirstOrDefaultAsync();
+
+    if (dosya is null)
+    {
+        return NotFound();
+    }
+
+    return View(dosya);
+}
     private Task<BasvuruDosyasi?> SonBasvuruDosyasi(int basvuruId, string eposta)
 {
     return _db.BasvuruDosyalari

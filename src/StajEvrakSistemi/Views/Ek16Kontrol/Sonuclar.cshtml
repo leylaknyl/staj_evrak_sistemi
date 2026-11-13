@@ -1,0 +1,32 @@
+@model StajEvrakSistemi.Models.BasvuruDosyasi
+
+@{
+    ViewData["Title"] = "Ek-16 Doğrulama Sonuçları";
+}
+
+<h2>Ek-16 Doğrulama Sonuçları</h2>
+<p>Başvuru No: @Model.BasvuruId</p>
+<p>Dosya: @Model.OrijinalDosyaAdi</p>
+
+@if (Model.DogrulamaSonuclari.Count > 0)
+{
+    foreach (var sonuc in Model.DogrulamaSonuclari.OrderBy(s => s.Id))
+    {
+        <div class="alert @(sonuc.UyariMi ? "alert-warning" : "alert-danger")">
+            <strong>@sonuc.Alan:</strong> @sonuc.Mesaj
+        </div>
+    }
+}
+else if (Model.KontrolEdilmeUtc.HasValue)
+{
+    <div class="alert alert-success">Hata veya uyarı bulunamadı.</div>
+}
+else
+{
+    <div class="alert alert-info">Bu dosya henüz kontrol edilmedi.</div>
+}
+
+<a asp-controller="Paneller" asp-action="Ogrenci"
+   class="btn btn-outline-secondary">
+    Öğrenci Paneline Dön
+</a>
