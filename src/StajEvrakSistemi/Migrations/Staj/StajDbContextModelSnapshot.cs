@@ -24,6 +24,7 @@ namespace StajEvrakSistemi.Migrations.Staj
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Durum")
+                        .IsConcurrencyToken()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("OgrenciKaydiId")
@@ -53,6 +54,9 @@ namespace StajEvrakSistemi.Migrations.Staj
 
                     b.Property<string>("DepolamaAnahtari")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("KontrolEdilmeUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OrijinalDosyaAdi")

@@ -96,7 +96,24 @@
                                     <td>@basvuru.Id</td>
                                     <td>@(basvuru.DosyaAdi ?? "Dosya kaydı yok")</td>
                                     <td>@durumMetni</td>
-                                    <td>
+                                    <td>@if (basvuru.DosyaAdi is not null && basvuru.Durum != BasvuruDurumu.Tamamlandi)
+{
+    <a asp-controller="Ek16Kontrol"
+       asp-action="Index"
+       asp-route-basvuruId="@basvuru.Id"
+       class="btn btn-outline-primary btn-sm mb-2">
+        Ek-16 Kontrolü
+    </a>
+}
+    @if (basvuru.DosyaAdi is not null)
+{
+    <a asp-controller="Ek16Kontrol"
+       asp-action="Sonuclar"
+       asp-route-basvuruId="@basvuru.Id"
+       class="btn btn-outline-secondary btn-sm mb-2">
+        Doğrulama Sonuçları
+    </a>
+}
     @if (basvuru.Durum == BasvuruDurumu.HataliEksik)
     {
         <form asp-controller="Evrak" asp-action="Yukle"
