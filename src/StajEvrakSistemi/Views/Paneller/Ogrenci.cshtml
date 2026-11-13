@@ -57,7 +57,6 @@
             </div>
         </div>
     }
-
     @if (Model.Ogrenci is not null)
 {
     <section class="card mb-4">
@@ -131,14 +130,30 @@
                 <div class="card-body">
                     <h5>Ek-16 Evrak Yükleme</h5>
 
-                    <p>
-                        PDF veya Word belgesi yükleme işlemi,
-                        belge modülüyle eklenecektir.
-                    </p>
+                    @if (TempData["EvrakHata"] is string evrakHata)
+{
+    <div class="alert alert-danger">@evrakHata</div>
+}
 
-                    <span class="badge bg-secondary">
-                        Henüz entegre edilmedi
-                    </span>
+@if (TempData["EvrakBasari"] is string evrakBasari)
+{
+    <div class="alert alert-success">@evrakBasari</div>
+}
+
+@if (Model.Ogrenci is not null)
+{
+    <form asp-controller="Evrak" asp-action="Yukle"
+          method="post" enctype="multipart/form-data">
+        <label for="ek16Dosyasi" class="form-label">Ek-16 dosyası</label>
+        <input id="ek16Dosyasi" name="dosya" type="file"
+               class="form-control mb-2"
+               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
+
+        <p class="form-text">PDF, Word, JPEG veya PNG. En fazla 10 MB.</p>
+
+        <button type="submit" class="btn btn-primary">Evrak Yükle</button>
+    </form>
+}
                 </div>
             </div>
         </div>

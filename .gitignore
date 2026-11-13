@@ -436,4 +436,6 @@ FodyWeavers.xsd
 
 **/staj.db
 **/staj.db-shm
-**/staj.db-wal
+**/staj.db-wal**/staj.db-wal
+
+/src/StajEvrakSistemi/App_Data/Evraklar/
