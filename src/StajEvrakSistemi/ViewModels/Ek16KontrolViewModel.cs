@@ -6,6 +6,8 @@ namespace StajEvrakSistemi.ViewModels;
 
 public class Ek16KontrolViewModel
 {
+    public int? BasvuruId { get; set; }
+    public int? BasvuruDosyasiId { get; set; }    
     public Ek16BasvuruBilgileri Bilgiler { get; set; }
         = new Ek16BasvuruBilgileri();
 
