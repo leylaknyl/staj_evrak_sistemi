@@ -19,7 +19,7 @@ public class EvrakController(
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(11 * 1024 * 1024)]
-    public async Task<IActionResult> Yukle(IFormFile? dosya)
+    public async Task<IActionResult> Yukle(IFormFile? dosya, int? basvuruId)
     {
     if (!ModelState.IsValid)
 {
@@ -61,10 +61,28 @@ public class EvrakController(
         string anahtar = $"{Guid.NewGuid():N}{uzanti}";
         string yol = Path.Combine(klasor, anahtar);
 
-        var basvuru = new Basvuru
+        Basvuru basvuru;
+
+if (basvuruId is int id)
 {
-    OgrenciKaydiId = ogrenciIdleri[0]
-};
+    var mevcutBasvuru = await db.Basvurular.SingleOrDefaultAsync(
+        b => b.Id == id && b.OgrenciKaydiId == ogrenciIdleri[0]);
+
+    if (mevcutBasvuru is null ||
+        !mevcutBasvuru.DurumDegistir(BasvuruDurumu.Yuklendi))
+    {
+        return YuklemeHatasi("Bu başvuruya yeniden evrak yüklenemiyor.");
+    }
+
+    basvuru = mevcutBasvuru;
+}
+else
+{
+    basvuru = new Basvuru
+    {
+        OgrenciKaydiId = ogrenciIdleri[0]
+    };
+}
 
         basvuru.Dosyalar.Add(new BasvuruDosyasi
         {
@@ -85,7 +103,10 @@ public class EvrakController(
                 await dosya.CopyToAsync(hedef);
             }
 
-            db.Basvurular.Add(basvuru);
+            if (basvuruId is null)
+{
+    db.Basvurular.Add(basvuru);
+}
             await db.SaveChangesAsync();
         }
         catch (Exception hata) when (

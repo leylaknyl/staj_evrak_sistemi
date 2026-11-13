@@ -32,5 +32,8 @@ public class StajDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(b => b.OgrenciKaydiId)
                 .OnDelete(DeleteBehavior.Restrict);
+                modelBuilder.Entity<Basvuru>()
+    .Property(b => b.Durum)
+    .IsConcurrencyToken();
     }
 }

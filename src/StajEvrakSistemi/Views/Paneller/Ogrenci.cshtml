@@ -76,6 +76,7 @@
                                 <th scope="col">Başvuru No</th>
                                 <th scope="col">Son Yüklenen Dosya</th>
                                 <th scope="col">Durum</th>
+                                <th scope="col">İşlem</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,6 +96,26 @@
                                     <td>@basvuru.Id</td>
                                     <td>@(basvuru.DosyaAdi ?? "Dosya kaydı yok")</td>
                                     <td>@durumMetni</td>
+                                    <td>
+    @if (basvuru.Durum == BasvuruDurumu.HataliEksik)
+    {
+        <form asp-controller="Evrak" asp-action="Yukle"
+              method="post" enctype="multipart/form-data">
+            <input type="hidden" name="basvuruId" value="@basvuru.Id" />
+
+            <label for="duzeltme-@basvuru.Id" class="form-label">
+                Düzeltilmiş Ek-16 dosyası
+            </label>
+            <input id="duzeltme-@basvuru.Id" name="dosya" type="file"
+                   class="form-control form-control-sm mb-2"
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required />
+
+            <button type="submit" class="btn btn-primary btn-sm">
+                Yeniden Yükle
+            </button>
+        </form>
+    }
+</td>
                                 </tr>
                             }
                         </tbody>
