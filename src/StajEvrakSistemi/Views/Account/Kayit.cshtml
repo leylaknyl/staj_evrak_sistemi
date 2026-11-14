@@ -1,0 +1,18 @@
+@model StajEvrakSistemi.ViewModels.KayitViewModel
+
+<h1>Öğrenci Hesabı Oluştur</h1>
+
+<form asp-action="Kayit" method="post" class="card p-4">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <label asp-for="Eposta" class="form-label">E-posta</label>
+    <input asp-for="Eposta" class="form-control mb-3" />
+
+    <label asp-for="Sifre" class="form-label">Şifre</label>
+    <input asp-for="Sifre" class="form-control mb-3" />
+
+    <label asp-for="SifreTekrar" class="form-label">Şifreyi tekrar yazın</label>
+    <input asp-for="SifreTekrar" class="form-control mb-3" />
+
+    <button type="submit" class="btn btn-primary">Hesap Oluştur</button>
+</form>

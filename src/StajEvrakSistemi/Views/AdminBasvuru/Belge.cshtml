@@ -1,0 +1,62 @@
+@model StajEvrakSistemi.ViewModels.AdminBelgeSatiri[]
+
+<h1>Ek-16 Belge İnceleme</h1>
+<p>Başvuru #@ViewData["BasvuruId"] · @ViewData["DosyaAdi"]</p>
+
+@if (ViewData["OkumaMesaji"] is string mesaj)
+{
+    <p class="alert alert-warning">@mesaj</p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Alan</th>
+            <th>PDF</th>
+            <th>Kayıtlı Form</th>
+            <th>CSV</th>
+            <th>PDF–CSV Sonucu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var satir in Model)
+        {
+            <tr>
+                <td>@satir.Alan</td>
+                <td>@(satir.Belge ?? "—")</td>
+                <td>@(satir.Form ?? "—")</td>
+                <td>@(satir.Csv ?? "—")</td>
+                <td>@satir.Sonuc</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (TempData["Hata"] is string islemHatasi)
+{
+    <p class="alert alert-warning">@islemHatasi</p>
+}
+
+@if (ViewData["BelgeYonetilebilir"] is true)
+{
+    <form asp-action="BelgeDegistir" method="post"
+          enctype="multipart/form-data" class="mb-3">
+        <input type="hidden" name="id" value="@ViewData["BasvuruId"]" />
+        <input type="hidden" name="dosyaId" value="@ViewData["DosyaId"]" />
+        <label for="yeniDosya" class="form-label">Yeni Ek-16 dosyası</label>
+        <input id="yeniDosya" name="yeniDosya" type="file"
+               class="form-control mb-2" required />
+        <button type="submit" class="btn btn-outline-primary">
+            Belgeyi Değiştir
+        </button>
+    </form>
+
+    <form asp-action="BelgeSil" method="post" class="mb-3"
+          onsubmit="return confirm('Bu belgeyi silmek istediğine emin misin?');">
+        <input type="hidden" name="id" value="@ViewData["BasvuruId"]" />
+        <input type="hidden" name="dosyaId" value="@ViewData["DosyaId"]" />
+        <button type="submit" class="btn btn-outline-danger">
+            Belgeyi Sil
+        </button>
+    </form>
+}
+<a asp-action="Index" class="btn btn-outline-secondary">Başvurulara Dön</a>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using StajEvrakSistemi.Models;
 using StajEvrakSistemi.Data;
 using StajEvrakSistemi.Services;
@@ -58,7 +59,9 @@ public async Task<IActionResult> Index(int? basvuruId)
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(Ek16KontrolViewModel model)
+    public async Task<IActionResult> Index(
+    Ek16KontrolViewModel model,
+    [FromServices] IWebHostEnvironment ortam)
     {
 
         var kullanici = await _userManager.GetUserAsync(User);
@@ -134,6 +137,60 @@ void Karsilastir(string alan, string? formDegeri, string? kayitDegeri)
         return Conflict("Başvuru dosyası değişmiş veya artık düzenlenemiyor. Öğrenci panelinden formu yeniden açın.");
     }
 
+    string yol = Path.Combine(
+    ortam.ContentRootPath, "App_Data", "Evraklar", dosya.DepolamaAnahtari);
+
+var belge = new Dictionary<string, string>();
+
+try
+{
+    belge = Ek16BelgeOkuyucu.Oku(yol);
+}
+catch (Exception hata) when (
+    hata is IOException or UnauthorizedAccessException
+    or UglyToad.PdfPig.Core.PdfDocumentFormatException
+    or System.Xml.XmlException)
+{
+    model.Sonuclar.Add(new DogrulamaMesaji(
+        "Ek-16 belgesi", "Dosya okunamadı. Belgeyi kontrol edin."));
+}
+
+if (belge.Count == 0)
+{
+    model.Sonuclar.Add(new DogrulamaMesaji(
+        "Ek-16 alanları", "Belgeden karşılaştırılabilir alan okunamadı."));
+}
+else
+{
+    var bilgi = model.Bilgiler;
+
+    BelgeAlaniniKontrolEt("Ad Soyad", bilgi.AdSoyad);
+    BelgeAlaniniKontrolEt("E-posta", bilgi.Eposta);
+    BelgeAlaniniKontrolEt("Telefon", bilgi.Telefon, YalnizRakamlar);
+    BelgeAlaniniKontrolEt("Kimlik Numarası", bilgi.KimlikNo, YalnizRakamlar);
+    BelgeAlaniniKontrolEt("Staj Başlangıç Tarihi", bilgi.StajBaslangicTarihi?.ToString("dd.MM.yyyy"));
+    BelgeAlaniniKontrolEt("Staj Bitiş Tarihi", bilgi.StajBitisTarihi?.ToString("dd.MM.yyyy"));
+    BelgeAlaniniKontrolEt("Evrak Teslim Tarihi", bilgi.TeslimTarihi?.ToString("dd.MM.yyyy"));
+}
+
+void BelgeAlaniniKontrolEt(
+    string alan, string? formDegeri, Func<string?, string>? normalestir = null)
+{
+    if (!belge.TryGetValue(alan, out var belgeDegeri))
+    {
+        model.Sonuclar.Add(new DogrulamaMesaji(alan, "Belgede bu alan okunamadı."));
+        return;
+    }
+
+    string sol = normalestir?.Invoke(belgeDegeri) ?? belgeDegeri.Trim();
+    string sag = normalestir?.Invoke(formDegeri) ?? formDegeri?.Trim() ?? "";
+
+    if (sol.Length == 0 || !string.Equals(sol, sag, StringComparison.OrdinalIgnoreCase))
+    {
+        model.Sonuclar.Add(new DogrulamaMesaji(
+            alan, "Belgedeki değer formdaki değerle uyuşmuyor."));
+    }
+}
     var oncekiSonuclar = await _db.DogrulamaSonuclari
         .Where(s => s.BasvuruDosyasiId == dosyaId)
         .ToListAsync();
@@ -147,7 +204,7 @@ void Karsilastir(string alan, string? formDegeri, string? kayitDegeri)
         Mesaj = sonuc.Mesaj,
         UyariMi = sonuc.UyariMi
     }));
-      
+      dosya.FormBilgileriJson = JsonSerializer.Serialize(model.Bilgiler);
     dosya.KontrolEdilmeUtc = DateTime.UtcNow;
     await _db.SaveChangesAsync();
     await islem.CommitAsync();

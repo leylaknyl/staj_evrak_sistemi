@@ -48,6 +48,10 @@
                             <td>@basvuru.OgrenciKaydi.AdSoyad</td>
                             <td>@durumMetni</td>
                             <td>
+                                <a asp-action="Belge" asp-route-id="@basvuru.Id"
+   class="btn btn-outline-primary btn-sm">
+    Belgeyi İncele
+</a>
                                 @if (basvuru.Durum == BasvuruDurumu.Yuklendi)
                                 {
                                     <form asp-action="IncelemeyeAl" method="post">
