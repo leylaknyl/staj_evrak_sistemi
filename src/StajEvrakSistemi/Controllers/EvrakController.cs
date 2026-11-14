@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StajEvrakSistemi.Services;
 using StajEvrakSistemi.Data;
 using StajEvrakSistemi.Models;
 
@@ -56,6 +57,13 @@ public class EvrakController(
         {
             return YuklemeHatasi("PDF, Word, JPEG veya PNG dosyası seçin.");
         }
+        using (var akim = dosya.OpenReadStream())
+{
+    if (!Ek16BelgeOkuyucu.FormatGecerli(akim, uzanti))
+    {
+        return YuklemeHatasi("Dosyanın içeriği seçilen uzantıyla uyuşmuyor.");
+    }
+}
 
         string klasor = Path.Combine(ortam.ContentRootPath, "App_Data", "Evraklar");
         string anahtar = $"{Guid.NewGuid():N}{uzanti}";
