@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using StajEvrakSistemi.Models;
 using StajEvrakSistemi.Data;
 using StajEvrakSistemi.Services;
@@ -147,7 +148,7 @@ void Karsilastir(string alan, string? formDegeri, string? kayitDegeri)
         Mesaj = sonuc.Mesaj,
         UyariMi = sonuc.UyariMi
     }));
-      
+      dosya.FormBilgileriJson = JsonSerializer.Serialize(model.Bilgiler);
     dosya.KontrolEdilmeUtc = DateTime.UtcNow;
     await _db.SaveChangesAsync();
     await islem.CommitAsync();

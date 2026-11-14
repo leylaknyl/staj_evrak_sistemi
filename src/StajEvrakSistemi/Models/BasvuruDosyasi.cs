@@ -12,6 +12,7 @@ public class BasvuruDosyasi
     public long BoyutBayt { get; set; }
     public DateTime YuklenmeUtc { get; set; } = DateTime.UtcNow;
     public DateTime? KontrolEdilmeUtc { get; set; }
+    public string? FormBilgileriJson { get; set; }
 
     public List<DogrulamaSonucu> DogrulamaSonuclari { get; set; } = new();
 }

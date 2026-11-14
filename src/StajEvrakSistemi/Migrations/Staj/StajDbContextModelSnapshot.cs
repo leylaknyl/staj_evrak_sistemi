@@ -56,6 +56,9 @@ namespace StajEvrakSistemi.Migrations.Staj
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("FormBilgileriJson")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("KontrolEdilmeUtc")
                         .HasColumnType("TEXT");
 
