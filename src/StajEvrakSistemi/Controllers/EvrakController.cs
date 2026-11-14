@@ -2,30 +2,44 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StajEvrakSistemi.Services;
 using StajEvrakSistemi.Data;
 using StajEvrakSistemi.Models;
+using StajEvrakSistemi.Services;
 
 namespace StajEvrakSistemi.Controllers;
 
 [Authorize(Roles = "Ogrenci")]
-public class EvrakController(
-    StajDbContext db,
-    UserManager<IdentityUser> userManager,
-    IWebHostEnvironment ortam,
-    ILogger<EvrakController> logger) : Controller
+public class EvrakController : Controller
 {
     private const long EnFazlaDosyaBoyutu = 10 * 1024 * 1024;
+
+    private readonly StajDbContext db;
+    private readonly UserManager<IdentityUser> userManager;
+    private readonly IWebHostEnvironment ortam;
+    private readonly ILogger<EvrakController> logger;
+
+    public EvrakController(
+        StajDbContext db,
+        UserManager<IdentityUser> userManager,
+        IWebHostEnvironment ortam,
+        ILogger<EvrakController> logger)
+    {
+        this.db = db;
+        this.userManager = userManager;
+        this.ortam = ortam;
+        this.logger = logger;
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(11 * 1024 * 1024)]
     public async Task<IActionResult> Yukle(IFormFile? dosya, int? basvuruId)
     {
-    if (!ModelState.IsValid)
-{
-    return YuklemeHatasi("Yükleme isteği geçersiz.");
-}
+        if (!ModelState.IsValid)
+        {
+            return YuklemeHatasi("Yükleme isteği geçersiz.");
+        }
+
         var kullanici = await userManager.GetUserAsync(User);
         if (kullanici is null)
         {
@@ -57,13 +71,14 @@ public class EvrakController(
         {
             return YuklemeHatasi("PDF, Word, JPEG veya PNG dosyası seçin.");
         }
+
         using (var akim = dosya.OpenReadStream())
-{
-    if (!Ek16BelgeOkuyucu.FormatGecerli(akim, uzanti))
-    {
-        return YuklemeHatasi("Dosyanın içeriği seçilen uzantıyla uyuşmuyor.");
-    }
-}
+        {
+            if (!Ek16BelgeOkuyucu.FormatGecerli(akim, uzanti))
+            {
+                return YuklemeHatasi("Dosyanın içeriği seçilen uzantıyla uyuşmuyor.");
+            }
+        }
 
         string klasor = Path.Combine(ortam.ContentRootPath, "App_Data", "Evraklar");
         string anahtar = $"{Guid.NewGuid():N}{uzanti}";
@@ -71,26 +86,26 @@ public class EvrakController(
 
         Basvuru basvuru;
 
-if (basvuruId is int id)
-{
-    var mevcutBasvuru = await db.Basvurular.SingleOrDefaultAsync(
-        b => b.Id == id && b.OgrenciKaydiId == ogrenciIdleri[0]);
+        if (basvuruId is int id)
+        {
+            var mevcutBasvuru = await db.Basvurular.SingleOrDefaultAsync(
+                b => b.Id == id && b.OgrenciKaydiId == ogrenciIdleri[0]);
 
-    if (mevcutBasvuru is null ||
-        !mevcutBasvuru.DurumDegistir(BasvuruDurumu.Yuklendi))
-    {
-        return YuklemeHatasi("Bu başvuruya yeniden evrak yüklenemiyor.");
-    }
+            if (mevcutBasvuru is null ||
+                !mevcutBasvuru.DurumDegistir(BasvuruDurumu.Yuklendi))
+            {
+                return YuklemeHatasi("Bu başvuruya yeniden evrak yüklenemiyor.");
+            }
 
-    basvuru = mevcutBasvuru;
-}
-else
-{
-    basvuru = new Basvuru
-    {
-        OgrenciKaydiId = ogrenciIdleri[0]
-    };
-}
+            basvuru = mevcutBasvuru;
+        }
+        else
+        {
+            basvuru = new Basvuru
+            {
+                OgrenciKaydiId = ogrenciIdleri[0]
+            };
+        }
 
         basvuru.Dosyalar.Add(new BasvuruDosyasi
         {
@@ -112,9 +127,10 @@ else
             }
 
             if (basvuruId is null)
-{
-    db.Basvurular.Add(basvuru);
-}
+            {
+                db.Basvurular.Add(basvuru);
+            }
+
             await db.SaveChangesAsync();
         }
         catch (Exception hata) when (
