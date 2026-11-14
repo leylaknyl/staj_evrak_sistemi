@@ -258,6 +258,14 @@
     @if (Model.KontrolEdildi)
     {
         <h3>Doğrulama Sonuçları</h3>
+        @if (Model.BasvuruDosyasiId.HasValue)
+{
+    bool hazir = !Model.Sonuclar.Any(sonuc => !sonuc.UyariMi);
+
+    <div class="alert @(hazir ? "alert-success" : "alert-danger")">
+        @(hazir ? "Belge teslime hazır." : "Belge teslime hazır değil.")
+    </div>
+}
 
 
 @if (Model.HesaplananStajGunu.HasValue)
