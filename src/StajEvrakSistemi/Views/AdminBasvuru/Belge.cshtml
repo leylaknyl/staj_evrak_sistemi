@@ -1,0 +1,35 @@
+@model StajEvrakSistemi.ViewModels.AdminBelgeSatiri[]
+
+<h1>Ek-16 Belge İnceleme</h1>
+<p>Başvuru #@ViewData["BasvuruId"] · @ViewData["DosyaAdi"]</p>
+
+@if (ViewData["OkumaMesaji"] is string mesaj)
+{
+    <p class="alert alert-warning">@mesaj</p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Alan</th>
+            <th>PDF</th>
+            <th>Kayıtlı Form</th>
+            <th>CSV</th>
+            <th>PDF–CSV Sonucu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var satir in Model)
+        {
+            <tr>
+                <td>@satir.Alan</td>
+                <td>@(satir.Belge ?? "—")</td>
+                <td>@(satir.Form ?? "—")</td>
+                <td>@(satir.Csv ?? "—")</td>
+                <td>@satir.Sonuc</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-outline-secondary">Başvurulara Dön</a>
