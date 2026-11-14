@@ -93,6 +93,57 @@ public class AccountController : Controller
 
     }
 
+
+      [AllowAnonymous]
+[HttpGet]
+public IActionResult Kayit()
+{
+    return View(new KayitViewModel());
+}
+
+[AllowAnonymous]
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Kayit(KayitViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(model);
+    }
+
+    string eposta = model.Eposta.Trim();
+    var kullanici = new IdentityUser
+    {
+        UserName = eposta,
+        Email = eposta
+    };
+
+    var sonuc = await _userManager.CreateAsync(kullanici, model.Sifre);
+
+    if (sonuc.Succeeded)
+    {
+        sonuc = await _userManager.AddToRoleAsync(kullanici, "Ogrenci");
+
+        if (sonuc.Succeeded)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        var geriAlma = await _userManager.DeleteAsync(kullanici);
+        if (!geriAlma.Succeeded)
+        {
+            ModelState.AddModelError("", "Hesap kurulumu tamamlanamadı. Yöneticiye başvurun.");
+            return View(model);
+        }
+    }
+
+    foreach (var hata in sonuc.Errors)
+    {
+        ModelState.AddModelError("", hata.Description);
+    }
+
+    return View(model);
+}
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
